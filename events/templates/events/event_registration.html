@@ -1,0 +1,32 @@
+{% extends 'events/base.html' %}
+
+{% block title %}Register for {{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="form-container">
+        <h1>Register for {{ event.title }}</h1>
+        
+        <form method="post" enctype="multipart/form-data" class="event-form">
+            {% csrf_token %}
+            
+            <div class="form-group">
+                <label for="{{ form.payment_proof.id_for_label }}">Upload Payment Proof</label>
+                {{ form.payment_proof }}
+                {% if form.payment_proof.errors %}
+                <div class="field-errors">
+                    {% for error in form.payment_proof.errors %}
+                    <span class="error">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+            </div>
+            
+            <div class="form-actions">
+                <button type="submit" class="button primary">Submit Registration</button>
+                <a href="{% url 'event_detail' pk=event.pk %}" class="button">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %} 

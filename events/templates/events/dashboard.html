@@ -1,0 +1,133 @@
+{% extends 'events/base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="container admin-dashboard">
+    <div class="admin-header">
+        <h1>Admin Dashboard</h1>
+        <div class="action-buttons">
+            <a href="{% url 'event_create' %}" class="action-button primary">Create New Event</a>
+            <a href="{% url 'admin:index' %}" class="action-button secondary">Django Admin</a>
+        </div>
+    </div>
+
+    <!-- Statistics Cards -->
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>Total Events</h3>
+            <p class="stat-number">{{ total_events }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Total Registrations</h3>
+            <p class="stat-number">{{ total_registrations }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Approved Registrations</h3>
+            <p class="stat-number">{{ approved_registrations }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>Pending Approvals</h3>
+            <p class="stat-number">{{ pending_registrations }}</p>
+            {% if pending_registrations > 0 %}
+            <a href="{% url 'manage_registrations' %}" class="action-button primary">Review Pending</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Recent Events Table -->
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2>Recent Events Overview</h2>
+            <a href="{% url 'event_list' %}" class="action-button secondary">View All Events</a>
+        </div>
+        <div class="table-responsive">
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>Event</th>
+                        <th>Date</th>
+                        <th>Total Registrations</th>
+                        <th>Approved</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for event in events_with_registrations %}
+                    <tr>
+                        <td>{{ event.title }}</td>
+                        <td>{{ event.date|date:"M d, Y" }}</td>
+                        <td>{{ event.registration_count }}</td>
+                        <td>{{ event.approved_count }}</td>
+                        <td>
+                            {% if event.is_full %}
+                            <span class="status-full">Full</span>
+                            {% else %}
+                            <span class="status-open">Open</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{% url 'event_detail' pk=event.pk %}" class="action-button secondary">View</a>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6">No events found</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Recent Registrations -->
+    <div class="dashboard-section">
+        <div class="section-header">
+            <h2>Recent Registrations</h2>
+            <a href="{% url 'manage_registrations' %}" class="action-button secondary">Manage All Registrations</a>
+        </div>
+        <div class="table-responsive">
+            <table class="dashboard-table">
+                <thead>
+                    <tr>
+                        <th>User</th>
+                        <th>Event</th>
+                        <th>Registration Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for registration in recent_registrations %}
+                    <tr>
+                        <td>{{ registration.user.username }}</td>
+                        <td>{{ registration.event.title }}</td>
+                        <td>{{ registration.registration_date|date:"M d, Y H:i" }}</td>
+                        <td>
+                            {% if registration.is_approved %}
+                            <span class="status-approved">Approved</span>
+                            {% else %}
+                            <span class="status-pending">Pending</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if not registration.is_approved %}
+                            <form action="{% url 'approve_registration' pk=registration.pk %}" method="post" style="display: inline;">
+                                {% csrf_token %}
+                                <button type="submit" class="action-button primary">Approve</button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5">No recent registrations</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %} 

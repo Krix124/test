@@ -1,0 +1,40 @@
+{% extends 'events/base.html' %}
+
+{% block title %}{{ event.title }}{% endblock %}
+
+{% block content %}
+<div class="container">
+    <div class="event-detail">
+        <h1>{{ event.title }}</h1>
+        
+        <div class="event-info">
+            <p class="event-date">
+                <strong>Date & Time:</strong> {{ event.date|date:"F d, Y H:i" }}
+            </p>
+            <p class="event-location">
+                <strong>Location:</strong> {{ event.location }}
+            </p>
+            <p class="event-participants">
+                <strong>Participants:</strong> {{ event.current_participants }}/{{ event.max_participants }}
+            </p>
+        </div>
+
+        <div class="event-description">
+            <h2>Description</h2>
+            {{ event.description|linebreaks }}
+        </div>
+
+        <div class="event-actions">
+            {% if not event.is_full %}
+            <form action="{% url 'event_register' pk=event.pk %}" method="post">
+                {% csrf_token %}
+                <button type="submit" class="button primary">Register for Event</button>
+            </form>
+            {% else %}
+            <p class="event-full">This event is full</p>
+            {% endif %}
+            <a href="{% url 'event_list' %}" class="button">Back to Events</a>
+        </div>
+    </div>
+</div>
+{% endblock %} 

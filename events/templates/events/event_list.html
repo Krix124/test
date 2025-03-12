@@ -1,0 +1,31 @@
+{% extends 'events/base.html' %}
+
+{% block title %}Events List{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Upcoming Events</h1>
+    
+    <div class="events-grid">
+        {% for event in events %}
+        <div class="event-card">
+            <h2>{{ event.title }}</h2>
+            <p class="event-date">{{ event.date|date:"F d, Y H:i" }}</p>
+            <p class="event-location">📍 {{ event.location }}</p>
+            <p class="event-participants">
+                👥 {{ event.current_participants }}/{{ event.max_participants }} participants
+            </p>
+            <div class="event-actions">
+                <a href="{% url 'event_detail' pk=event.pk %}" class="button">View Details</a>
+            </div>
+        </div>
+        {% empty %}
+        <p class="no-events">No events scheduled yet.</p>
+        {% endfor %}
+    </div>
+    
+    <div class="create-event">
+        <a href="{% url 'event_create' %}" class="button primary">Create New Event</a>
+    </div>
+</div>
+{% endblock %} 

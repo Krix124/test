@@ -1,0 +1,38 @@
+{% extends 'events/base.html' %}
+
+{% block title %}Manage Registrations{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Manage Event Registrations</h1>
+    
+    <div class="registrations-list">
+        {% for registration in registrations %}
+        <div class="registration-card">
+            <div class="registration-info">
+                <h3>{{ registration.event.title }}</h3>
+                <p>User: {{ registration.user.username }}</p>
+                <p>Registration Date: {{ registration.registration_date|date:"F d, Y H:i" }}</p>
+                <p>Status: {% if registration.is_approved %}Approved{% else %}Pending{% endif %}</p>
+            </div>
+            
+            <div class="payment-proof">
+                <h4>Payment Proof</h4>
+                <img src="{{ registration.payment_proof.url }}" alt="Payment Proof">
+            </div>
+            
+            {% if not registration.is_approved %}
+            <div class="registration-actions">
+                <form action="{% url 'approve_registration' pk=registration.pk %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="button primary">Approve Registration</button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+        {% empty %}
+        <p>No registrations to manage.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} 

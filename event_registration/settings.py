@@ -17,12 +17,29 @@ from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Create logs directory if it doesn't exist
-LOGS_DIR = os.path.join(BASE_DIR, 'logs')
-if not os.path.exists(LOGS_DIR):
-    os.makedirs(LOGS_DIR)
+# Website root directory
+WEBSITE_ROOT = os.path.join(BASE_DIR, 'website_root')
+
+# Create required directories if they don't exist
+REQUIRED_DIRS = ['static', 'media', 'logs']
+for dir_name in REQUIRED_DIRS:
+    dir_path = os.path.join(WEBSITE_ROOT, dir_name)
+    if not os.path.exists(dir_path):
+        os.makedirs(dir_path)
+
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(WEBSITE_ROOT, 'static')
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'events/static'),
+]
+
+# Media files (Uploaded files)
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(WEBSITE_ROOT, 'media')
 
 # Logging Configuration
+LOGS_DIR = os.path.join(WEBSITE_ROOT, 'logs')
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -172,21 +189,10 @@ USE_I18N = True
 USE_TZ = True
 
 
-# Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.2/howto/static-files/
-
-STATIC_URL = 'static/'
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'events/static'),
-]
-
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
-
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/'
